@@ -1,0 +1,8 @@
+# depslib dependency file v1.0
+1443547932 source:c:\users\miguel\desktop\juegos\main.cpp
+	<iostream>
+	<stdlib.h>
+	<vector>
+	<unistd.h>
+	<time.h>
+
