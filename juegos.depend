@@ -6,3 +6,40 @@
 	<unistd.h>
 	<time.h>
 
+1443551545 source:c:\users\miguel\desktop\juegos\snake.cpp
+	"miniwin.h"
+	<cstdlib>
+	<ctime>
+	<math.h>
+
+1320920740 c:\users\miguel\desktop\juegos\miniwin.h
+	<iostream>
+
+1320920740 source:c:\users\miguel\desktop\juegos\miniwin.cpp
+	<fstream>
+	<sstream>
+	<queue>
+	<math.h>
+	<process.h>
+	<windows.h>
+	<windowsx.h>
+	"miniwin.h"
+	<cstdio>
+	<cstdlib>
+	<iostream>
+	<string>
+	<queue>
+	<X11/Xlib.h>
+	<X11/Xutil.h>
+	<X11/Xos.h>
+	<X11/Xatom.h>
+	<X11/keysym.h>
+	"miniwin.h"
+
+1443552556 source:c:\users\miguel\desktop\juegos\game_life.cpp
+	<iostream>
+	<stdlib.h>
+	<vector>
+	<unistd.h>
+	<time.h>
+

@@ -1,132 +1,93 @@
-#include <iostream>
-#include <stdlib.h>
-#include <vector>
-#include <unistd.h>
-#include <time.h>
+#if defined(UNICODE) && !defined(_UNICODE)
+    #define _UNICODE
+#elif defined(_UNICODE) && !defined(UNICODE)
+    #define UNICODE
+#endif
 
+#include <tchar.h>
+#include <windows.h>
 
+/*  Declare Windows procedure  */
+LRESULT CALLBACK WindowProcedure (HWND, UINT, WPARAM, LPARAM);
 
-class Map{
+/*  Make the class name into a global variable  */
+TCHAR szClassName[ ] = _T("CodeBlocksWindowsApp");
 
-
-public:
-	int filas;
-	int columnas;
-	std::vector< std::vector<int> > v;
-
-	Map(int nfilas, int ncol);
-	void drawMap();
-	void step();
-
-
-
-};
-
-Map::Map(int nfilas, int ncol){
-	filas = nfilas;
-	columnas = ncol;
-	v.resize(filas);
-	for(unsigned int i = 0; i < v.size(); ++i)
-		v[i].resize(columnas);
-
-	for( int j = 0; j < filas; ++j){
-
-		for( int k = 0; k < columnas; ++k)
-			v[j][k] = rand()%2;
-
-	}
-
-
-
-}
-
-
-void Map::drawMap(){
-
-	for( int i =0; i< filas; ++i){
-		for( int j =0; j< columnas; ++j){
-			if(v[i][j] ==1)
-				std::cout << "#";
-			else
-				std::cout << "-";
-		}
-		std::cout << "\n";
-	}
-}
-
-
-void Map::step(){
-	unsigned int numVecinos;
-	std::vector< std::vector<int> > aux = v;
-	for( int i =0; i< filas-1; ++i){
-
-		for( int j =0; j< columnas-1; ++j){
-            numVecinos = 0;
-			if((i-1 >= 0) && (j-1 >0))
-				if(v[i-1][j-1] == 1)
-					numVecinos++;
-			if(i-1 >= 0)
-				if(v[i-1][j] ==1)
-					numVecinos++;
-			if((i-1 >=0 ) && (j+1 <=columnas-1))
-				if(v[i-1][j+1] ==1)
-					numVecinos++;
-			if(j+1 <= columnas-1)
-				if(v[i][j+1]==1)
-					numVecinos++;
-			if(j-1 >=0)
-				if(v[i][j-1] == 1)
-					numVecinos++;
-			if((i+1<= filas-1) && (j+1 <= columnas-1) )
-				if(v[i+1][j+1] ==1)
-					numVecinos++;
-			if(i+1 <= filas-1)
-				if(v[i+1][j] ==1)
-					numVecinos++;
-			if((i+1<= filas-1) &&(j-1 >= 0))
-				if(v[i+1][j-1] == 1)
-					numVecinos++;
-
-			if (v[i][j] ==0){
-				if(numVecinos == 3){
-					aux[i][j] = 1;
-				}
-
-			}
-
-			if (v[i][j] == 1){
-				if(numVecinos !=2 || numVecinos !=3)
-					aux[i][j] = 0;
-			}
-
-
-		}
-
-
-
-
-	}
-
-	std::swap(v,aux);
-
-
-
-}
-
-
-int main()
+int WINAPI WinMain (HINSTANCE hThisInstance,
+                     HINSTANCE hPrevInstance,
+                     LPSTR lpszArgument,
+                     int nCmdShow)
 {
-	/* code */
-	srand(time(0));
-	Map m(20,20);
-	while(true){
-        usleep(10000);
-		m.drawMap();
-		usleep(10000);
-		m.step();
-		system("CLS");
+    HWND hwnd;               /* This is the handle for our window */
+    MSG messages;            /* Here messages to the application are saved */
+    WNDCLASSEX wincl;        /* Data structure for the windowclass */
 
-	}
+    /* The Window structure */
+    wincl.hInstance = hThisInstance;
+    wincl.lpszClassName = szClassName;
+    wincl.lpfnWndProc = WindowProcedure;      /* This function is called by windows */
+    wincl.style = CS_DBLCLKS;                 /* Catch double-clicks */
+    wincl.cbSize = sizeof (WNDCLASSEX);
 
-	return 0;
+    /* Use default icon and mouse-pointer */
+    wincl.hIcon = LoadIcon (NULL, IDI_APPLICATION);
+    wincl.hIconSm = LoadIcon (NULL, IDI_APPLICATION);
+    wincl.hCursor = LoadCursor (NULL, IDC_ARROW);
+    wincl.lpszMenuName = NULL;                 /* No menu */
+    wincl.cbClsExtra = 0;                      /* No extra bytes after the window class */
+    wincl.cbWndExtra = 0;                      /* structure or the window instance */
+    /* Use Windows's default colour as the background of the window */
+    wincl.hbrBackground = (HBRUSH) COLOR_BACKGROUND;
+
+    /* Register the window class, and if it fails quit the program */
+    if (!RegisterClassEx (&wincl))
+        return 0;
+
+    /* The class is registered, let's create the program*/
+    hwnd = CreateWindowEx (
+           0,                   /* Extended possibilites for variation */
+           szClassName,         /* Classname */
+           _T("Code::Blocks Template Windows App"),       /* Title Text */
+           WS_OVERLAPPEDWINDOW, /* default window */
+           CW_USEDEFAULT,       /* Windows decides the position */
+           CW_USEDEFAULT,       /* where the window ends up on the screen */
+           544,                 /* The programs width */
+           375,                 /* and height in pixels */
+           HWND_DESKTOP,        /* The window is a child-window to desktop */
+           NULL,                /* No menu */
+           hThisInstance,       /* Program Instance handler */
+           NULL                 /* No Window Creation data */
+           );
+
+    /* Make the window visible on the screen */
+    ShowWindow (hwnd, nCmdShow);
+
+    /* Run the message loop. It will run until GetMessage() returns 0 */
+    while (GetMessage (&messages, NULL, 0, 0))
+    {
+        /* Translate virtual-key messages into character messages */
+        TranslateMessage(&messages);
+        /* Send message to WindowProcedure */
+        DispatchMessage(&messages);
+    }
+
+    /* The program return-value is 0 - The value that PostQuitMessage() gave */
+    return messages.wParam;
+}
+
+
+/*  This function is called by the Windows function DispatchMessage()  */
+
+LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+    switch (message)                  /* handle the messages */
+    {
+        case WM_DESTROY:
+            PostQuitMessage (0);       /* send a WM_QUIT to the message queue */
+            break;
+        default:                      /* for messages that we don't deal with */
+            return DefWindowProc (hwnd, message, wParam, lParam);
+    }
+
+    return 0;
 }
